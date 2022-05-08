@@ -1,20 +1,54 @@
-# PNGDIB
- A DIB-PNG conversion library for Windows
-By Jason Summers <jason1@pobox.com>
-Jason has repositories at https://github.com/jsummers
-Version 3.1.0 was published Jul. 2010
-Web site: <http://entropymine.com/jason/pngdib/>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>PNGDIB</title>
 
-Licease:
-This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-Permission is hereby granted to use, copy, modify, and distribute this source code for any purpose, without fee. 
+<style type="text/css">
+body { background-color: #fff; color: #000 }
+h1,h2,h3,h4,h5,h6 { font-family: Verdana, Arial, sans-serif; }
+div.uselib h4 { color: #444; font-style: italic; background-color: #eee }
 
+dl.fdef dt { color: #040; font-family: Verdana, Arial, sans-serif;
+ font-size: 0.9em; background-color: #dee;
+  border-top: 1px solid #084; margin-top: 2px;
+}
+dl.fdef dt b { color: #004; }
+</style>
 
-PNGDIB is a C library that makes it easy to convert between DIB (or BMP) images and PNG images.
-Sample programs are included which convert between BMP image files and PNG image files. Also included is a simple PNG viewer.
-The API for version 3.x is very different from the one in previous versions. The new API is intended to make it easier to add new features.
+</head>
+<body>
 
+<h1>PNGDIB</h1>
+<p>
+A DIB-PNG conversion library for Win32<br>
+By Jason Summers  &lt;<a href="mailto:jason1@pobox.com">jason1@pobox.com</a>&gt;<br>
+Version 3.1.0, Jul. 2010<br>
+Web site: &lt;<a href="http://entropymine.com/jason/pngdib/">http://entropymine.com/jason/pngdib/</a>&gt;
+</p>
 
+<p><tt>
+This software is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+or FITNESS FOR A PARTICULAR PURPOSE.
+</tt></p>
+
+<p><tt>
+Permission is hereby granted to use, copy, modify, and distribute this
+source code for any purpose, without fee.
+</tt></p>
+
+<div style="background-color: #ddd">
+<h2>Requirements</h2>
+
+<ul>
+<li>zlib  &lt;<a href="http://www.zlib.net/">http://www.zlib.net/</a>&gt;<br>
+
+<li>libpng  &lt;<a href="http://www.libpng.org/pub/png/">http://www.libpng.org/pub/png/</a>&gt;<br>
+</ul>
+</div>
+
+<div style="background-color: #eff">
 <h2>Introduction</h2>
 
 <p>
@@ -345,3 +379,127 @@ functions -- in that case, set <i>p2d</i> to NULL.
 If you did set your own memory allocation functions, then
 use your own "free" function instead of this one.
 
+</dl>
+
+<h4>Obsolete functions</h4>
+
+<dl class=fdef>
+<dt>int <b>read_png_to_dib</b>(PNGD_P2DINFO *p2dp)
+<dd>Provided only for backward compatibility.
+
+<dt>int <b>write_dib_to_png</b>(PNGD_D2PINFO *d2pp)
+<dd>Provided only for backward compatibility.
+
+</dl>
+</div>
+
+
+<div style="background-color:#fde;">
+
+<h2>To Do</h2>
+
+<p>Some changes I might conceivably make in some future version...
+
+<ul>
+<li>Use CreateFile() and related functions instead of fopen(), etc.
+<li>The background-color (transparency) and gamma-correction code is too
+complicated. This is partly libpng's fault, but with some effort, one
+could probably make the PNGDIB code more readable.
+</ul>
+
+</div>
+
+
+
+
+<div style="background-color:#ddf">
+<h2>History</h2>
+
+<h4>CHANGES in PNGDIB v3.1.0</h4>
+<ul>
+<li>New pngdib_d2p_set_png_write_fn() and pngdib_p2d_set_png_read_fn() functions
+for custom I/O.
+</ul>
+
+<h4>CHANGES in PNGDIB v3.0.2</h4>
+<ul>
+<li>New pngdib_setcallback_pngptrhook() function.
+<li>Made the sample utilites (png2bmp, bmp2png, smview) support Unicode.
+<li>Other minor cleanup of the sample utilities.
+</ul>
+
+<h4>CHANGES in PNGDIB v3.0.1 (vs. 3.0.0)</h4>
+<ul>
+<li>Re-fixed a memory-freeing error that I fixed in
+version 2.2.2 and somehow reintroduced in version 3.0.0.
+</ul>
+
+<h4>CHANGES in PNGDIB v3.0.0 (vs. 2.x)</h4>
+
+<ul>
+<li>Completely changed the programming interface. The old
+Win32-API-style method of filling in the fields of a structure and
+passing it to a single function that does everything was becoming too
+difficult to maintain. It now uses an object-oriented approach similar
+to most libraries, with many separate functions that can be
+called to access the various features. A compatibility layer is
+provided so that older programs can continue to work, but if you want
+to use any new features, you'll need to use the new API.
+
+<li>The default calling convention for the pngdib_get_version
+functions has been changed to WINAPI.
+This will likely break binary compatibility
+if you used those functions.
+
+<li>Support for reading PNG files from memory images.
+
+<li>Ability to set monitor gamma.
+
+<li>Can define your own functions to use for memory allocation.
+
+<li>An attempt at Unicode support.
+</ul>
+
+
+</div>
+
+
+
+<div style="background-color:#dfd;">
+
+<h2><a name=smview>Instructions for the sample PNG viewer (smview)</a></h2>
+
+<p>Load a PNG image by selecting File|Open from the menu, or by drag-and-drop 
+from Windows Explorer.</p>
+
+<p>Gamma Correction - Toggles gamma correction. If you turn this off, some 
+images, or parts of images, will look too light or too dark.</p>
+
+<p>Save As PNG - Saves the visible image to a file. 
+This saves the image as it is currently being displayed. The 
+saved image will not have any transparency, and the background color and 
+gamma correction will be applied to the image, not saved as meta-data. 
+This means that you can lose information by loading and then saving a PNG 
+image.</p>
+
+<p>Background colors - You can define a background color that will be used in 
+certain situations. The following logic is used to select a background 
+color: If "Use Image's Background Color" is checked, and the current PNG 
+image file contains a suggested background color, that suggested 
+background color will be used. Otherwise, if "Use Custom Background Color" 
+is checked, your custom background color will be used (by default this is 
+a very light gray color). Otherwise, no background color will be used at 
+all, and transparency information in the image will be completely ignored.  
+Some images will not look very good in this situation. 
+(A default background color &ndash; usually white &ndash;
+will be used for the window, but will not be applied to the 
+image.)</p>
+
+<p>Any time you make a change to the gamma or background color settings, the 
+PNG file will be reloaded from disk. That's not the ideal thing to do, but 
+this <i>is</i> just a demo program...</p>
+
+</div>
+
+</body>
+</html>
