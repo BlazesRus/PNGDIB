@@ -213,3 +213,10 @@ node_modules/
 *.CoreCompileInputs.cache
 *.dll
 *.dat
+ObjectFiles/Debug_x64/PNGDIB.tlog/
+
+*.bsc
+
+*.recipe
+
+Debug_x64/
