@@ -222,7 +222,7 @@ Debug*_x64/*
 Release*_x64/*
 Debug*_Win32/*
 Release*_Win32/*
-*/Debug*_x64/*
-*/Release*_x64/*
-*/Debug*_Win32/*
-*/Release*_Win32/*
+**/Debug*_x64/*
+**/Release*_x64/*
+**/Debug*_Win32/*
+**/Release*_Win32/*

@@ -78,6 +78,18 @@
     <LibPngDir>..\libpng\</LibPngDir>
     <LibPngLibrary>$(LibPngDir)projects\vstudio\$(Platform)\$(Configuration)Library\libpng.lib</LibPngLibrary>
   </PropertyGroup>
+  <PropertyGroup Label="UserMacros">
+    <ZLibDir>..\zlib-win64\</ZLibDir>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">Debug</LibraryConfiguration>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">Release</LibraryConfiguration>
+    <ZLibLibrary>$(ZLibDir)$(Platform)\$(LibraryConfiguration)\zlib.lib</ZLibLibrary>
+    <LibPngDir>..\libpng\</LibPngDir>
+    <LibPngLibrary>$(LibPngDir)projects\vstudio\$(Platform)\$(LibraryConfiguration)Library\libpng.lib</LibPngLibrary>
+<!--
+    <PngDibLibrary Condition="'$(Configuration)'=='DebugU' || '$(Configuration)'=='ReleaseU'">..\$(LibraryConfiguration)\pngdibU.lib;</PngDibLibrary>
+    <PngDibLibrary Condition="'$(Configuration)'=='Release' || '$(Configuration)'=='Release'">..\$(LibraryConfiguration)\pngdib.lib;</PngDibLibrary>
+-->
+  </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>16.0.32002.118</_ProjectFileVersion>
   </PropertyGroup>
@@ -111,35 +123,36 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <Optimization Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">MaxSpeed</Optimization>
+      <Optimization Condition="'$(LibraryConfiguration)'=='Debug'">Disabled</Optimization>
+      <Optimization Condition="'$(LibraryConfiguration)'=='Release'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(ZLibDir);$(LibPngDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">MultiThreaded</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions Condition="'$(LibraryConfiguration)'=='Debug'">WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(LibraryConfiguration)'=='Release'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary Condition="'$(LibraryConfiguration)'=='Release'">MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(LibraryConfiguration)'=='Debug'">MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">true</FunctionLevelLinking>
-      <IntrinsicFunctions Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">true</IntrinsicFunctions>
+      <FunctionLevelLinking Condition="'$(LibraryConfiguration)'=='Release'">true</FunctionLevelLinking>
+      <IntrinsicFunctions Condition="'$(LibraryConfiguration)'=='Release'">true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <BrowseInformation Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">true</BrowseInformation>
-      <DebugInformationFormat Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">OldStyle</DebugInformationFormat>
+      <BrowseInformation Condition="'$(LibraryConfiguration)'=='Debug'">true</BrowseInformation>
+      <DebugInformationFormat Condition="'$(LibraryConfiguration)'=='Debug'">OldStyle</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">true</EnableCOMDATFolding>
-      <OptimizeReferences Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">true</OptimizeReferences>
+      <EnableCOMDATFolding Condition="'$(LibraryConfiguration)'=='Release'">true</EnableCOMDATFolding>
+      <OptimizeReferences Condition="'$(LibraryConfiguration)'=='Release'">true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(ZLibLibrary);$(LibPngLibrary);</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ZLibDir);$(LibPngDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <OutputFile>$(OutDir)pngdib.lib</OutputFile>
+      <OutputFile Condition="'$(LibraryConfiguration)'=='Release'">$(OutDir)pngdib.lib</OutputFile>
+      <OutputFile Condition="'$(LibraryConfiguration)'=='Release'">$(OutDir)pngdibU.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <Bscmake>
