@@ -47,7 +47,6 @@
     <CodeAnalysisRules />
     <CodeAnalysisRuleAssemblies />
     <CharacterSet>NotSet</CharacterSet>
-    <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
@@ -72,12 +71,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <!--Legacy builds store zlib and libpng in src/SPClient/win/ -->
-    <ZLibDir>..\zlib-win64\</ZLibDir>
-    <ZLibLibrary>$(ZLibDir)$(Platform)\$(Configuration)\zlib.lib</ZLibLibrary>
-    <LibPngDir>..\libpng\</LibPngDir>
-    <LibPngLibrary>$(LibPngDir)projects\vstudio\$(Platform)\$(Configuration)Library\libpng.lib</LibPngLibrary>
-    <PngDibLibrary>..\$(Configuration)\pngdib.lib;</PngDibLibrary>
+    <ZLibDir>..\..\zlib-win64\</ZLibDir>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">Debug</LibraryConfiguration>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">Release</LibraryConfiguration>
+    <ZLibLibrary>$(ZLibDir)$(Platform)\$(LibraryConfiguration)\zlib.lib</ZLibLibrary>
+    <LibPngDir>..\..\libpng\</LibPngDir>
+    <LibPngLibrary>$(LibPngDir)projects\vstudio\$(Platform)\$(LibraryConfiguration)Library\libpng.lib</LibPngLibrary>
+    <PngDibLibrary Condition="'$(Configuration)'=='DebugU' Or '$(Configuration)'=='ReleaseU'">..\$(LibraryConfiguration)\pngdibU.lib;</PngDibLibrary>
+    <PngDibLibrary Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">..\$(LibraryConfiguration)\pngdib.lib;</PngDibLibrary>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>16.0.32002.118</_ProjectFileVersion>
@@ -116,8 +117,8 @@
       <HeaderFileName />
     </Midl>
     <ClCompile>
-      <MinimalRebuild Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">true</MinimalRebuild>
-      <Optimization Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">Disabled</Optimization>
+      <MinimalRebuild Condition="'$(LibraryConfiguration)'=='Debug' Or '$(Configuration)'=='DebugU'">true</MinimalRebuild>
+      <Optimization Condition="'$(LibraryConfiguration)'=='Debug'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>..\;$(ZLibDir);$(LibPngDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

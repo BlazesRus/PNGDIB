@@ -47,7 +47,6 @@
     <CodeAnalysisRules />
     <CodeAnalysisRuleAssemblies />
     <CharacterSet>NotSet</CharacterSet>
-    <ConfigurationType>StaticLibrary</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
