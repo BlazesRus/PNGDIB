@@ -373,7 +373,7 @@ int PNGDIB_DECL pngdib_p2d_run(PNGDIB *qq)
         }
 
         FILE* InputFile;
-        if((fp = _tfopen_s(InputFile, p2d->input_filename,_T("rb"))) == 0) {//if((fp = _tfopen(p2d->input_filename,_T("rb"))) == NULL) {
+        if((fp = _tfopen_s(&InputFile, p2d->input_filename,_T("rb"))) == 0) {//if((fp = _tfopen(p2d->input_filename,_T("rb"))) == NULL) {
             rv=PNGD_E_READ;
             goto abort;
         }
@@ -1060,7 +1060,7 @@ int PNGDIB_DECL pngdib_d2p_run(PNGDIB *qq)
 
     if(d2p->output_method==PNGD_IO_METHOD_FILENAME) {
         FILE* InputFile;
-        fp= _tfopen_s(InputFile, d2p->output_filename,_T("wb"));//_tfopen(d2p->output_filename,_T("wb"));
+        fp= _tfopen_s(&InputFile, d2p->output_filename,_T("wb"));//_tfopen(d2p->output_filename,_T("wb"));
         if(!fp) {
             rv=PNGD_E_WRITE;
             goto abort;
