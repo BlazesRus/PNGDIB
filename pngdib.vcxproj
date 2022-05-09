@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugDLL|Win32">
+      <Configuration>DebugDLL</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugDLL|x64">
+      <Configuration>DebugDLL</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="DebugU|Win32">
       <Configuration>DebugU</Configuration>
       <Platform>Win32</Platform>
@@ -15,6 +23,14 @@
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseDLL|Win32">
+      <Configuration>ReleaseDLL</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseDLL|x64">
+      <Configuration>ReleaseDLL</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="ReleaseU|Win32">
@@ -36,13 +52,14 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0C0165C0-A9AB-4E38-A9CF-6921291E6AC5}</ProjectGuid>
-    <RootNamespace>PNGDIB</RootNamespace>
-    <ProjectName>PNGDIB</ProjectName>
+    <RootNamespace>pngdib</RootNamespace>
+    <ProjectName>pngdib</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="GlobalsPart2">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType Condition="'$(Configuration)'!='DebugDLL' And '$(Configuration)'!='ReleaseDLL'">StaticLibrary</ConfigurationType>
+    <ConfigurationType Condition="'$(Configuration)'=='DebugDLL' Or '$(Configuration)'=='ReleaseDLL'">DynamicLibrary</ConfigurationType>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules />
     <CodeAnalysisRuleAssemblies />
@@ -53,7 +70,7 @@
   <PropertyGroup Condition="'$(Configuration)'=='DebugU' Or '$(Configuration)'=='ReleaseU'" Label="Unicode Configuration">
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='DebugDLL' Or '$(Configuration)'=='ReleaseDLL'" Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'" Label="Configuration">
@@ -72,14 +89,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <ZLibDir>..\zlib-win64\</ZLibDir>
-    <LibraryConfiguration Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">Debug</LibraryConfiguration>
-    <LibraryConfiguration Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">Release</LibraryConfiguration>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU' Or '$(Configuration)'=='DebugDLL'">Debug</LibraryConfiguration>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU' Or '$(Configuration)'=='ReleaseDLL'">Release</LibraryConfiguration>
     <ZLibLibrary>$(ZLibDir)$(Platform)\$(LibraryConfiguration)\zlib.lib</ZLibLibrary>
     <LibPngDir>..\libpng\</LibPngDir>
     <LibPngLibrary>$(LibPngDir)projects\vstudio\$(Platform)\$(LibraryConfiguration)Library\libpng.lib</LibPngLibrary>
-<!--
-    <PngDibLibrary Condition="'$(Configuration)'=='DebugU' || '$(Configuration)'=='ReleaseU'">..\$(LibraryConfiguration)\pngdibU.lib;</PngDibLibrary>
-    <PngDibLibrary Condition="'$(Configuration)'=='Release' || '$(Configuration)'=='Release'">..\$(LibraryConfiguration)\pngdib.lib;</PngDibLibrary>
+    <!--
+    <PngDibLibrary Condition="'$(LibraryConfiguration)'=='Debug' And '$(Configuration)'!='DebugDLL'">..\$(LibraryConfiguration)_$(Platform)\pngdibU.lib</PngDibLibrary>
+    <PngDibLibrary Condition="'$(LibraryConfiguration)'=='Release' And '$(Configuration)'!='ReleaseDLL'">..\$(LibraryConfiguration)_$(Platform)\pngdib.lib</PngDibLibrary>
+    <PngDibLibrary Condition="'$(Configuration)'=='Debug'">..\$(LibraryConfiguration)_$(Platform)\pngdibU.lib</PngDibLibrary>
+    <PngDibLibrary Condition="'$(Configuration)'=='ReleaseDLL'">..\$(LibraryConfiguration)_$(Platform)\pngdib.lib</PngDibLibrary>
 -->
   </PropertyGroup>
   <PropertyGroup>
@@ -88,6 +107,8 @@
   <PropertyGroup Label="OutputInfo">
     <OutDir>$(Configuration)_$(Platform)\</OutDir>
     <IntDir>ObjectFiles\$(Configuration)_$(Platform)\</IntDir>
+    <TargetName Condition="'$(Configuration)'=='DebugU' Or '$(Configuration)'=='ReleaseU'">$(ProjectName)U</TargetName>
+    <TargetName Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -113,15 +134,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseU|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <Optimization Condition="'$(LibraryConfiguration)'=='Debug'">Disabled</Optimization>
       <Optimization Condition="'$(LibraryConfiguration)'=='Release'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(ZLibDir);$(LibPngDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(LibraryConfiguration)'=='Debug' And '$(Configuration)'!='DebugDLL'">WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(LibraryConfiguration)'=='Release' And '$(Configuration)'!='ReleaseDLL'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(LibraryConfiguration)'=='Debug'">WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(LibraryConfiguration)'=='Release'">WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary Condition="'$(LibraryConfiguration)'=='Release'">MultiThreaded</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(LibraryConfiguration)'=='Debug'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(LibraryConfiguration)'=='Release' And '$(Configuration)'!='ReleaseDLL'">MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(LibraryConfiguration)'=='Debug' And '$(Configuration)'!='DebugDLL'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)'=='DebugDLL'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)'=='ReleaseDLL'">MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking Condition="'$(LibraryConfiguration)'=='Release'">true</FunctionLevelLinking>
       <IntrinsicFunctions Condition="'$(LibraryConfiguration)'=='Release'">true</IntrinsicFunctions>
@@ -139,12 +170,12 @@
       <EnableCOMDATFolding Condition="'$(LibraryConfiguration)'=='Release'">true</EnableCOMDATFolding>
       <OptimizeReferences Condition="'$(LibraryConfiguration)'=='Release'">true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ZLibLibrary);$(LibPngLibrary);</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ZLibDir);$(LibPngDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Configuration)'=='DebugDLL' Or '$(Configuration)'=='ReleaseDLL'">$(ZLibLibrary);$(LibPngLibrary);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)'=='DebugDLL' Or '$(Configuration)'=='ReleaseDLL'">$(ZLibDir);$(LibPngDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <OutputFile Condition="'$(LibraryConfiguration)'=='Release'">$(OutDir)pngdib.lib</OutputFile>
-      <OutputFile Condition="'$(LibraryConfiguration)'=='Release'">$(OutDir)pngdibU.lib</OutputFile>
+      <OutputFile Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseDLL'">$(OutDir)pngdib.lib</OutputFile>
+      <OutputFile Condition="'$(Configuration)'=='ReleaseU' Or '$(Configuration)'=='ReleaseDLL'">$(OutDir)pngdibU.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <Bscmake>

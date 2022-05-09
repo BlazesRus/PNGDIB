@@ -72,13 +72,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <ZLibDir>..\..\zlib-win64\</ZLibDir>
-    <LibraryConfiguration Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU'">Debug</LibraryConfiguration>
-    <LibraryConfiguration Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU'">Release</LibraryConfiguration>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugU' Or '$(Configuration)'=='DebugDLL'">Debug</LibraryConfiguration>
+    <LibraryConfiguration Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='ReleaseU' Or '$(Configuration)'=='ReleaseDLL'">Release</LibraryConfiguration>
     <ZLibLibrary>$(ZLibDir)$(Platform)\$(LibraryConfiguration)\zlib.lib</ZLibLibrary>
     <LibPngDir>..\..\libpng\</LibPngDir>
     <LibPngLibrary>$(LibPngDir)projects\vstudio\$(Platform)\$(LibraryConfiguration)Library\libpng.lib</LibPngLibrary>
-    <PngDibLibrary Condition="'$(Configuration)'=='DebugU' Or '$(Configuration)'=='ReleaseU'">..\$(LibraryConfiguration)\pngdibU.lib;</PngDibLibrary>
-    <PngDibLibrary Condition="'$(Configuration)'=='Release' Or '$(Configuration)'=='Release'">..\$(LibraryConfiguration)\pngdib.lib;</PngDibLibrary>
+    <PngDibLibrary Condition="'$(LibraryConfiguration)'=='Debug'">..\$(LibraryConfiguration)_$(Platform)\pngdibU.lib</PngDibLibrary>
+    <PngDibLibrary Condition="'$(LibraryConfiguration)'=='Release'">..\$(LibraryConfiguration)_$(Platform)\pngdib.lib</PngDibLibrary>
+<!--     <PngDibDir Condition="'$(LibraryConfiguration)'=='Debug'">..\</PngDibDir> -->
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>16.0.32002.118</_ProjectFileVersion>
