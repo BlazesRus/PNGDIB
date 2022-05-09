@@ -227,7 +227,7 @@ static void my_png_read_fn(png_structp png_ptr,
     }
 
     CopyMemory((void*)data,(void*)&p2d->input_memblk[p2d->input_memblk_curpos],length);
-    p2d->input_memblk_curpos+=length;
+    p2d->input_memblk_curpos+=(int)length;
 }
 
 // A callback function used with custom I/O.
@@ -285,7 +285,8 @@ int PNGDIB_DECL pngdib_p2d_run(PNGDIB *qq)
     png_uint_32 res_x, res_y;
     int has_phys, has_gama;
     int res_unit_type;
-    FILE *fp;
+    FILE *filePointer = NULL;
+    errno_t fileErrorCode;
     int palette_entries;
     unsigned char **row_pointers;
     unsigned char *lpdib;
@@ -320,7 +321,6 @@ int PNGDIB_DECL pngdib_p2d_run(PNGDIB *qq)
     rv=PNGD_E_ERROR;
     png_ptr=NULL;
     info_ptr=NULL;
-    fp=NULL;
     row_pointers=NULL;
     lpdib=NULL;
 
@@ -372,12 +372,11 @@ int PNGDIB_DECL pngdib_p2d_run(PNGDIB *qq)
             rv=PNGD_E_ERROR; goto abort;
         }
 
-        FILE* InputFile;
-        if((fp = _tfopen_s(&InputFile, p2d->input_filename,_T("rb"))) == 0) {//if((fp = _tfopen(p2d->input_filename,_T("rb"))) == NULL) {
+        if((fileErrorCode = _tfopen_s(&filePointer, p2d->input_filename, _T("rb"))) == 0) {
             rv=PNGD_E_READ;
             goto abort;
         }
-        png_init_io(png_ptr, fp);
+        png_init_io(png_ptr, filePointer);
     }
     else if(p2d->input_method==PNGD_IO_METHOD_MEMBLK) {
         // reading from a memory block
@@ -464,7 +463,7 @@ int PNGDIB_DECL pngdib_p2d_run(PNGDIB *qq)
     else if(is_grayscale && has_trns && png_bit_depth<=8
         && (has_bkgd || (p2d->use_custom_bg_flag)) )
     {
-        // grayscale binarytrans,<=8bpp: transparency is handle manually
+        // grayscale binary transparency,<=8bpp: transparency is handle manually
         // by modifying a palette entry (later)
         png_get_tRNS(png_ptr,info_ptr,&trns_trans, &i, &temp_colorp);
         if(i>=1) {
@@ -732,8 +731,8 @@ notrans:
     png_ptr=NULL;
 
     if(p2d->input_method==PNGD_IO_METHOD_FILENAME) {
-        fclose(fp);
-        fp=NULL;
+        fclose(filePointer);
+        filePointer=NULL;
     }
 
     // fill in the DIB header fields
@@ -768,7 +767,7 @@ notrans:
 abort:
 
     if(png_ptr) png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-    if(p2d->input_method==PNGD_IO_METHOD_FILENAME && fp) fclose(fp);
+    if(p2d->input_method==PNGD_IO_METHOD_FILENAME && filePointer) fclose(filePointer);
     if(row_pointers) free((void*)row_pointers);
     if(lpdib) {
         pngdib_p2d_free_dib((PNGDIB*)p2d,NULL);
@@ -847,7 +846,8 @@ int PNGDIB_DECL pngdib_d2p_run(PNGDIB *qq)
     int topdown;
     int dib_bytesperrow;
     int compression;
-    FILE *fp;
+    FILE* filePointer = NULL;
+    errno_t fileErrorCode;
     png_color png_palette[256];
     unsigned char **row_pointers;
     int i,x,y,size;
@@ -868,7 +868,6 @@ int PNGDIB_DECL pngdib_d2p_run(PNGDIB *qq)
     rv=PNGD_E_ERROR;  // this should always get changed before returning
     png_ptr=NULL;
     info_ptr=NULL;
-    fp=NULL;
     row_pointers=NULL;
     newimage=NULL;
     dib_alpha32=0;
@@ -1059,14 +1058,13 @@ int PNGDIB_DECL pngdib_d2p_run(PNGDIB *qq)
     }
 
     if(d2p->output_method==PNGD_IO_METHOD_FILENAME) {
-        FILE* InputFile;
-        fp= _tfopen_s(&InputFile, d2p->output_filename,_T("wb"));//_tfopen(d2p->output_filename,_T("wb"));
-        if(!fp) {
+        fileErrorCode = _tfopen_s(&filePointer, d2p->output_filename,_T("wb"));
+        if(!filePointer) {
             rv=PNGD_E_WRITE;
             goto abort;
         }
 
-        png_init_io(png_ptr, fp);
+        png_init_io(png_ptr, filePointer);
     }
     else if(d2p->output_method==PNGD_IO_METHOD_CUSTOM) {
         png_set_write_fn(png_ptr, (void*)d2p, my_png_write_fn_custom, my_png_flush_fn_custom);
@@ -1217,7 +1215,7 @@ int PNGDIB_DECL pngdib_d2p_run(PNGDIB *qq)
 
 abort:
     if(png_ptr) png_destroy_write_struct(&png_ptr, &info_ptr);
-    if(fp) fclose(fp);
+    if(filePointer) fclose(filePointer);
     if(row_pointers) free(row_pointers);
     if(newimage) free(newimage);
 
